@@ -21,6 +21,8 @@ export type NoodlParseServerResult = {
     port: number;
     appId: string;
     masterKey: string;
+    serverURL: string;
+    publicServerURL: string;
   };
   server: ParseServer;
   logger: LoggerAdapter;
@@ -78,7 +80,7 @@ export function createNoodlParseServer({
     );
   }
 
-  const server = new ParseServer({
+  const options = {
     databaseURI,
     cloud: path.resolve(__dirname, './static/cloud.cjs'),
     push: false,
@@ -100,7 +102,9 @@ export function createNoodlParseServer({
     },
     filesAdapter,
     ...parseOptions,
-  });
+  }
+
+  const server = new ParseServer(options);
 
   return {
     functionOptions: {
@@ -111,6 +115,9 @@ export function createNoodlParseServer({
       port,
       appId,
       masterKey,
+      // NOTE: These properties can be overriden by parseOptions
+      serverURL: options.serverURL,
+      publicServerURL: options.publicServerURL,
     },
     server,
     logger,

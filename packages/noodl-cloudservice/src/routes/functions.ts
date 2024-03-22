@@ -25,16 +25,12 @@ export async function routeFunctions(
 
     // Execute the request
     const cfResponse = await executeFunction({
-      port: noodlServer.options.port,
-      appId: noodlServer.options.appId,
-      masterKey: noodlServer.options.masterKey,
+      noodlServer,
       version,
       logger: new Logger(noodlServer),
       headers: req.headers,
       functionId,
       body: req.body,
-      timeOut: noodlServer.functionOptions.timeOut,
-      memoryLimit: noodlServer.functionOptions.memoryLimit,
     });
 
     if (cfResponse.headers) {

@@ -1,6 +1,7 @@
 import { getCachedContext, scheduleContextCachePurge } from './cfcontext';
 import { CFVersion } from './function-deploy';
 import { Logger } from './logger';
+import { NoodlParseServerResult } from './parse';
 
 // The logger that is needed by the cloud functions
 // it passes the logs to the parse server logger
@@ -19,33 +20,31 @@ export class FunctionLogger {
 }
 
 export type ExecuteFunctionOptions = {
-  port: number;
-  appId: string;
-  masterKey: string;
+  noodlServer: NoodlParseServerResult;
   version: CFVersion;
   logger: Logger;
   headers: Record<string, unknown>
   functionId: string;
   body: string;
-  timeOut: number;
-  memoryLimit: number;
 }
 
 export async function executeFunction({
-  port,
-  appId,
-  masterKey,
+  noodlServer,
   version,
   logger,
   headers,
   functionId,
   body,
-  timeOut = 15,
-  memoryLimit = 256
 }: ExecuteFunctionOptions) {
+  const appId = noodlServer.options.appId;
+  const masterKey = noodlServer.options.masterKey;
+  const timeOut = noodlServer.functionOptions.timeOut || 15;
+  const memoryLimit = noodlServer.functionOptions.memoryLimit || 256;
+  const serverUrl = noodlServer.options.serverURL;
+
   // Prepare the context
   let cachedContext = await getCachedContext({
-    backendEndpoint: 'http://localhost:' + port,
+    backendEndpoint: serverUrl,
     appId,
     masterKey,
     version,
