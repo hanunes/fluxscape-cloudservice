@@ -30,9 +30,7 @@ export async function routeFunctionsAdmin(
 
     console.log('Uploading deploy...')
     const { version } = await deployFunctions({
-      port: noodlServer.options.port,
-      appId: noodlServer.options.appId,
-      masterKey: noodlServer.options.masterKey,
+      noodlServer,
       runtime: req.body.runtime,
       data: req.body.deploy
     })

@@ -1,5 +1,6 @@
 import fetch from 'node-fetch';
 import { Utils } from './utils';
+import { NoodlParseServerResult } from './parse';
 
 export type GetLatestVersionOptions = {
   appId: string;
@@ -56,12 +57,18 @@ export async function getLatestVersion(options: GetLatestVersionOptions): Promis
 }
 
 export async function deployFunctions({
-  port,
-  appId,
-  masterKey,
+  noodlServer,
   runtime,
   data
+}: {
+  noodlServer: NoodlParseServerResult,
+  runtime: any,
+  data: any,
 }) {
+  const appId = noodlServer.options.appId;
+  const masterKey = noodlServer.options.masterKey;
+  const serverUrl = noodlServer.options.serverURL;
+
   const deploy = "const _exportedComponents = " + data
   const version = Utils.randomString(16)
 
@@ -69,7 +76,6 @@ export async function deployFunctions({
   const chunks = Utils.chunkString(deploy, 100 * 1024);
 
   // Upload all (must be waterfall so they get the right created_at)
-  const serverUrl = 'http://localhost:' + port;
   for (let i = 0; i < chunks.length; i++) {
     await fetch(serverUrl + '/classes/Ndl_CF', {
       method: 'POST',
