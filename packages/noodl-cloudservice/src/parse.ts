@@ -36,7 +36,7 @@ export function createNoodlParseServer({
   functionOptions,
   parseOptions = {},
 }: NoodlParseServerOptions): NoodlParseServerResult {
-  const serverURL = `http://localhost:${port}/`;
+  const serverURL = process.env.SERVER_URL || `http://localhost:${port}/`;
 
   const logger = new LoggerAdapter({
     databaseURI
